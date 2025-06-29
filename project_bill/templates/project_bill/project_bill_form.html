@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% if form.instance.id %}Edit{% else %}Create{% endif %} Project Bill</title>
+
+  <!-- Include Select2 static files -->
+  {{ form.media }}
+
+  <style>
+    body {
+      font-family: "Trebuchet MS", sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: left;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 16px;
+      color: #34495e;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+      padding: 6px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .action-links {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .action-links button,
+    .action-links a {
+      text-decoration: none;
+      font-size: 14px;
+      padding: 0 15px;
+      border-radius: 5px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+    }
+
+    .action-links button {
+      background-color: #0078D4;
+      border: none;
+    }
+
+    .action-links button:hover {
+      background-color: #005BB5;
+    }
+
+    .action-links a.back-to-list {
+      background-color: #27ae60;
+    }
+
+    .action-links a.back-to-list:hover {
+      background-color: #1e874b;
+    }
+
+    .action-links a.back-to-home {
+      background-color: #e74c3c;
+    }
+
+    .action-links a.back-to-home:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>{% if form.instance.id %}Edit{% else %}Create{% endif %} Project Bill</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+            <div style="color: red;">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="action-links">
+        <button type="submit">{% if form.instance.id %}Update{% else %}Save{% endif %}</button>
+        <a href="{% url 'project_bill_list' %}" class="back-to-list">Back to List</a>
+        <a href="{% url 'construction_department' %}" class="back-to-home">Back to CD Module</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
+

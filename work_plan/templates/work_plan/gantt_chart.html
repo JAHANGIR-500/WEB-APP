@@ -1,0 +1,47 @@
+{% block content %}
+<h2 style="margin-bottom: 20px;">📊 Work Plan Dashboard</h2>
+
+<div style="display: flex; gap: 20px; align-items: flex-start; overflow-x: auto;">
+
+  <!-- 🧾 Table Section -->
+  <div style="flex: 1; min-width: 900px;">
+    {% include "work_plan/partials/work_plan_table.html" %}
+  </div>
+
+  <!-- 📊 Gantt Chart Section -->
+  <div style="flex: 1; min-width: 900px;">
+    <h3>Gantt Chart</h3>
+    <div id="gantt" style="max-width: 100%; border: 1px solid #ccc; border-radius: 4px;"></div>
+  </div>
+
+</div>
+
+<!-- Frappe Gantt Dependencies -->
+<link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css" />
+<script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
+
+<script>
+  fetch("{% url 'gantt_chart_data' %}")
+    .then(response => response.json())
+    .then(data => {
+      new Gantt("#gantt", data, {
+        view_mode: "Week",
+        custom_popup_html: task => `
+          <div style="padding: 10px;">
+            <strong>${task.name}</strong><br>
+            📅 ${task.start} → ${task.end}<br>
+            🚧 Progress: ${task.progress}%
+          </div>
+        `
+      });
+    })
+    .catch(error => {
+      document.getElementById("gantt").innerHTML =
+        "<p style='color: red;'>Unable to load Gantt chart data.</p>";
+      console.error("Error loading Gantt data:", error);
+    });
+</script>
+{% endblock %}
+
+
+

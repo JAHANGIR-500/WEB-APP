@@ -1,0 +1,321 @@
+{% block content %}
+{% load dynamic_tags %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.5.0/dist/frappe-gantt.css">
+<script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.5.0/dist/frappe-gantt.min.js"></script>
+
+<style>
+  .form-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+  }
+
+  body, th, td, input, a, .nav-button, .filter-box, .apply-button, .action-button {
+    font-family: "Trebuchet MS", sans-serif;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .nav-button {
+    background: #0078D4;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    width: 125px;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .filter-box {
+    width: 20%;
+    padding: 4px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+  }
+
+  .apply-button {
+    width: 120px;
+    background: #dc3545;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .wide-table {
+    width: auto;
+    min-width: 1200px;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 3px 8px;
+    text-align: left;
+    height: 16px;
+    white-space: nowrap;
+  }
+
+  th {
+    background-color: #0078D4;
+    color: white;
+    font-size: 14px;
+    font-weight: 200;
+    letter-spacing: 0.1px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+  }
+
+  .action-button {
+    padding: 4px 10px;
+    font-size: 13px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+  }
+
+  .action-button.edit {
+    background-color: #28a745;
+  }
+
+  .action-button.delete {
+    background-color: #dc3545;
+  }
+
+  .pagination {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .page-button {
+    padding: 6px 12px;
+    background-color: #f1f1f1;
+    text-decoration: none;
+    border-radius: 4px;
+    color: #333;
+    border: 1px solid #ccc;
+  }
+
+  .page-button:hover {
+    background-color: #ddd;
+  }
+
+.gantt-wrapper {
+  position: relative;
+  top: -40px; /* Adjust this value as needed */
+}
+
+
+th {
+  height: 46px;
+}
+
+#gantt svg {
+  transform: translateY(-13px); /* or -1px, adjust as needed */
+}
+
+/* Year header (upper tier) */
+.gantt .upper-text {
+  fill: red;
+  font-weight: bold;
+}
+
+/* Month header (lower tier) */
+.gantt .lower-text {
+  fill: green;
+  font-weight: bold;
+}
+
+</style>
+
+<div class="form-container">
+  <h2>Work Plan</h2>
+
+  <div class="nav-buttons">
+    <a href="{% url 'work_plan_create' %}" class="nav-button">➕ Add Data</a>
+    <a href="{% url 'design_department' %}" class="nav-button">🏠 Back to Module</a>
+  </div>
+
+  <div class="filter-container">
+    <form method="get" style="display: flex; width: 100%; gap: 10px;">
+      <input type="text" name="q" value="{{ query }}" class="filter-box" placeholder="Enter project name" />
+      <button type="submit" class="apply-button">Apply Filter</button>
+    </form>
+  </div>
+
+  <!-- 🔁 Scroll-sync container -->
+  <div class="scroll-sync-container" style="display: flex; overflow-y: hidden; gap: 20px;">
+    <!-- 📋 Table -->
+    <div id="table-panel" style="overflow-y: auto; max-height: 600px; flex: 1;">
+      <table class="wide-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name of Project</th>
+            <th>Category Project</th>
+            <th>Name of Client</th>
+            <th>Name of Task in detailed</th>
+            <th>Category Drawing</th>
+            <th>DV</th>
+            <th>Planned Duration</th>
+            <th>Planned Start</th>
+            <th>Planned Finish</th>
+            <th>AD</th>
+            <th>Start Date</th>
+            <th>Finish Date</th>
+            <th>Progress (%)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for plan in work_plan %}
+          <tr>
+            <td>{{ plan.id }}</td>
+            <td>{{ plan.project.name_of_project }}</td>
+            <td>{{ plan.category_project }}</td>
+            <td>{{ plan.client.customer_name }}</td>
+            <td>{{ plan.task.name_of_task }}</td>
+            <td>{{ plan.category_drawing }}</td>
+            <td>{{ plan.duration_variance }}</td>
+            <td>{{ plan.planned_duration }}</td>
+            <td>{{ plan.planned_start }}</td>
+            <td>{{ plan.planned_finish }}</td>
+            <td>{{ plan.actual_duration }}</td>
+            <td>{{ plan.start_date }}</td>
+            <td>{{ plan.finish_date }}</td>
+            <td>{{ plan.progress }}</td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'work_plan_edit' plan.id %}" class="action-button edit">✏ Edit</a>
+                <a href="{% url 'work_plan_delete' plan.id %}" class="action-button delete" onclick="return confirm('Delete this work plan?');">🗑 Delete</a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="15">No work plans found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📊 Gantt -->
+   <div id="gantt-panel" style="overflow-y: auto; max-height: 800px; flex: 1;">
+  <div id="gantt" style="width: auto; min-width: 100%; height: auto;"></div>
+</div>
+  </div>
+
+  <!-- 📄 Pagination -->
+  <div class="pagination">
+    {% if work_plan.has_previous %}
+      <a href="?q={{ query }}&page=1" class="page-button">⏮ First</a>
+      <a href="?q={{ query }}&page={{ work_plan.previous_page_number }}" class="page-button">◀ Previous</a>
+    {% endif %}
+    <span>Page {{ work_plan.number }} of {{ work_plan.paginator.num_pages }}</span>
+    {% if work_plan.has_next %}
+      <a href="?q={{ query }}&page={{ work_plan.next_page_number }}" class="page-button">Next ▶</a>
+      <a href="?q={{ query }}&page={{ work_plan.paginator.num_pages }}" class="page-button">Last ⏭</a>
+    {% endif %}
+  </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("{% url 'gantt_chart_data' %}")
+    .then(response => response.json())
+    .then(tasks => {
+      if (!tasks.length) {
+        console.warn("No Gantt tasks received.");
+        return;
+      }
+
+      // 🌐 Set dynamic "Month Year" label (e.g., "June 2025")
+      const firstDate = new Date(tasks[0].start);
+      const monthYearLabel = firstDate.toLocaleString('default', {
+        month: 'long',
+        year: 'numeric'
+      });
+      const monthLabelElem = document.querySelector(".month-label");
+      if (monthLabelElem) {
+        monthLabelElem.textContent = monthYearLabel;
+      }
+
+      // 📊 Initialize the Gantt chart
+      const gantt = new Gantt("#gantt", tasks, {
+        view_mode: "Month",
+        upper_header_height: 14,  // Year
+        lower_header_height: 14,  // Month
+        bar_height: 20,
+        padding: 14,
+
+        custom_popup_html: task => `
+          <div style="padding: 12px; font-family: 'Trebuchet MS';">
+            <strong>${task.name}</strong>
+            <p>Start: ${task.start}<br>
+               End: ${task.end}<br>
+               Progress: ${task.progress}%</p>
+          </div>`
+      });
+
+      // 🎨 Set the bar Color
+setTimeout(() => {
+  document.querySelectorAll(".bar-progress").forEach(bar => {
+    bar.style.fill = "#D32F2F"; // Deep red, for example
+  });
+}, 800);
+
+setTimeout(() => {
+  document.querySelectorAll(".bar").forEach(bar => {
+    bar.style.fill = "#0078D4"; // Classic Microsoft Blue
+  });
+}, 800);
+
+    })
+    .catch(error => {
+      console.error("Failed to load Gantt data:", error);
+    });
+});
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+  
+
+
+      
+
+
+
+
+
+                

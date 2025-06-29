@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ERP UI</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 50px; 
+            
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Keeps buttons aligned left */
+        }
+
+        button {
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 10px; /* Adds spacing between buttons */
+            width: 220px;
+            text-align: left; /* Ensures text inside button is left-aligned */
+
+        }
+
+        button:hover { 
+            background-color: #005A9E; 
+        }
+
+        .home-button {
+            background-color: #28a745; /* Green color for home */
+        }
+
+        .home-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Home</h1> <!-- Keeps the title at the top -->
+
+    <div class="container"> <!-- Keeps structure but removes styling -->
+        
+        
+        <a href="{% url 'construction_department' %}">
+            <button type="button">Construction Department</button>
+        </a>
+
+        <a href="{% url 'design_department' %}">
+            <button type="button">Design Department</button>
+        </a>
+
+    </div>
+
+</body>
+</html>
+

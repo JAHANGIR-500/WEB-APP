@@ -1,0 +1,185 @@
+{% block content %}
+{% load humanize %}
+
+<style>
+.form-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: none;
+}
+body, th, td, input, a, .nav-button, .filter-box, .apply-button, .action-button {
+    font-family: "Trebuchet MS", sans-serif;
+}
+h2 {
+    text-align: left;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+    text-align: left;
+    height: 18px;
+}
+th {
+    background-color: #0078D4;
+    color: white;
+}
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.nav-button {
+    background: #0078D4;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    width: 125px;
+    height: 18px;
+    font-size: 14px;
+}
+.filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.filter-box {
+    width: 75%;
+    padding: 4px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+}
+.apply-button {
+    width: 120px;
+    background: #dc3545;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.action-button {
+    width: 60px;
+    height: 4px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    text-decoration: none;
+    font-size: 14px;
+    border-radius: 5px;
+}
+.action-button.edit {
+    background: #28a745;
+    color: white;
+}
+.action-button.delete {
+    background: #dc3545;
+    color: white;
+}
+</style>
+
+
+<div class="form-container">
+    <h2>Sales Bill</h2>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <a href="{% url 'sales_bill_create' %}" class="nav-button">➕ Add Sales Bill</a>
+        <a href="{% url 'construction_department' %}" class="nav-button">🏠 Back to Module</a>
+    </div>
+
+    <!-- Filter Box -->
+    <div class="filter-container">
+        <form method="get" style="display: flex; gap: 10px;">
+            <input type="text" name="q" value="{{ query }}" class="filter-box" placeholder="Enter project name">
+            <button type="submit" class="apply-button">Apply Filter</button>
+        </form>
+    </div>
+
+    <!-- Sales Bill Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name of Project</th>
+                <th>Name of Customer</th>
+                <th>Flat Type</th>
+                <th>Quantity</th>
+                <th>Unit Rate</th>
+                <th>Total Bill Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in sales_bills %}
+            <tr>
+                <td>{{ bill.id }}</td>
+                <td>{{ bill.project_name.name_of_project }}</td>
+                <td>{{ bill.customer_name.customer_name }}</td>
+                <td>{{ bill.flat_type }}</td>
+                <td>{{ bill.quantity }}</td>
+                <td>{{ bill.unit_rate }}</td>
+                <td>{{ bill.bill_amount }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'sales_bill_edit' bill.id %}" class="action-button edit">✏ Edit</a>
+                        <a href="{% url 'sales_bill_delete' bill.id %}" class="action-button delete" onclick="return confirm('Delete this sales bill?');">🗑 Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No sales bills found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if sales_bills.has_previous %}
+            <a href="?q={{ query }}&page=1" class="page-button">⏮ First</a>
+            <a href="?q={{ query }}&page={{ sales_bills.previous_page_number }}" class="page-button">◀ Previous</a>
+        {% endif %}
+        <span>Page {{ sales_bills.number }} of {{ sales_bills.paginator.num_pages }}</span>
+        {% if sales_bills.has_next %}
+            <a href="?q={{ query }}&page={{ sales_bills.next_page_number }}" class="page-button">Next ▶</a>
+            <a href="?q={{ query }}&page={{ sales_bills.paginator.num_pages }}" class="page-button">Last ⏭</a>
+        {% endif %}
+    </div>
+
+<!-- Total Aggregated Bill Amount -->
+    <div style="
+        margin-top: 1px;
+        text-align: right;
+        background: #f9f9f9;
+        padding: -3px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 4px;
+        color: blue;
+    ">
+        Total Bill Amount: {{ total_bill_amount|floatformat:2|intcomma }}
+    </div>
+</div>
+{% endblock %}

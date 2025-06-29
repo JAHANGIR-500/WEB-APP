@@ -1,0 +1,189 @@
+{% block content %}
+<style>
+    .form-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background: white;
+        border-radius: 5px;
+        box-shadow: none;
+    }
+
+    body, th, td, input, a, .nav-button, .filter-box, .apply-button, .action-button {
+        font-family: "Trebuchet MS", sans-serif;
+    }
+
+    h2 {
+        text-align: left;
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 28px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 4px 8px;
+        text-align: left;
+        height: 18px;
+    }
+
+    th {
+        background-color: #0078D4;
+        color: white;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .nav-button {
+        background: #0078D4;
+        color: white;
+        padding: 8px;
+        border-radius: 4px;
+        text-decoration: none;
+        width: 145px;
+        font-size: 14px;
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .filter-box {
+        width: 75%;
+        padding: 4px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 2px solid #ccc;
+    }
+
+    .apply-button {
+        width: 120px;
+        background: #dc3545;
+        color: white;
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .action-button {
+        width: 60px;
+        height: 4px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        text-decoration: none;
+        font-size: 14px;
+        border-radius: 5px;
+    }
+
+    .action-button.edit {
+        background: #28a745;
+        color: white;
+    }
+
+    .action-button.delete {
+        background: #dc3545;
+        color: white;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Project Bill List</h2>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <a href="{% url 'project_bill_create' %}" class="nav-button">➕ Add Project Bill</a>
+        <a href="{% url 'construction_department' %}" class="nav-button">🏠 Back to Module</a>
+    </div>
+
+    <!-- Filter Box -->
+    <div class="filter-container">
+        <form method="get" style="display: flex; gap: 10px;">
+            <input type="text" name="q" value="{{ query }}" class="filter-box" placeholder="Search by work name">
+            <button type="submit" class="apply-button">Apply Filter</button>
+        </form>
+    </div>
+
+    <!-- Bill Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Project</th>
+                <th>Contractor</th>
+                <th>Work Name</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Unit</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in project_bills %}
+            <tr>
+                <td>{{ bill.id }}</td>
+                <td>{{ bill.project.name }}</td>
+                <td>{{ bill.contractor.company_name }}</td>
+                <td>{{ bill.work_name }}</td>
+                <td>{{ bill.work_type }}</td>
+                <td>{{ bill.location }}</td>
+                <td>{{ bill.work_unit }}</td>
+                <td>{{ bill.quantity }}</td>
+                <td>{{ bill.unit_rate }}</td>
+                <td>{{ bill.bill_amount }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'project_bill_edit' bill.id %}" class="action-button edit">✏ Edit</a>
+                        <a href="{% url 'project_bill_delete' bill.id %}" class="action-button delete" onclick="return confirm('Are you sure you want to delete this bill?');">🗑 Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="11" class="text-center">No project bills found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if project_bills.has_previous %}
+            <a href="?q={{ query }}&page=1" class="page-button">⏮ First</a>
+            <a href="?q={{ query }}&page={{ project_bills.previous_page_number }}" class="page-button">◀ Previous</a>
+        {% endif %}
+
+        <span>Page {{ project_bills.number }} of {{ project_bills.paginator.num_pages }}</span>
+
+        {% if project_bills.has_next %}
+            <a href="?q={{ query }}&page={{ project_bills.next_page_number }}" class="page-button">Next ▶</a>
+            <a href="?q={{ query }}&page={{ project_bills.paginator.num_pages }}" class="page-button">Last ⏭</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
