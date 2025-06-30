@@ -23,8 +23,7 @@ urlpatterns = [
     path('construction-department/', include('construction_department.urls')),  # Your app route
     path('design-department/', include('design_department.urls')),  # ✅ Add this line
     path("work-plan/", include("work_plan.urls")),  # Correct spot for include
-
-
+    
 ]
 
 
