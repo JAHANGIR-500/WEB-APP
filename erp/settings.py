@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'customer',  # Your custom app
     'construction_department',  # ✅ Add this line
     'project',  # ✅ Add this line
+    'resource',  # ✅ Add this line
     'sales_bill',  # Your custom app
     'design_department',  # ✅ Add this line
     'task',  # ✅ Add this line

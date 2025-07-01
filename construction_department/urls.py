@@ -6,6 +6,8 @@ urlpatterns = [
     path('project/', include('project.urls')),        # ✅ Ensures projects are accessible
     path('customer/', include('customer.urls')),        # ✅ Ensures projects are accessible
     path('sales_bill/', include('sales_bill.urls')),  # ✅ Ensures sales bills are accessible
+    path('resource/', include('resource.urls')),  # Nested resource-related URLs
+    
 ]
 
 
