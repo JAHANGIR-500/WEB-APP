@@ -6,6 +6,7 @@ class Resource(models.Model):
         ('Nos', 'Nos'),
         ('Kg', 'Kg'),
         ('Lit', 'Lit'),
+        ('Bag', 'Bag'),
     ]
     RESOURCE_GROUPS = [
         ('Civil', 'Civil work Material'),
