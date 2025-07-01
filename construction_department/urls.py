@@ -3,12 +3,15 @@ from .views import construction_department_view
 
 urlpatterns = [
     path('', construction_department_view, name='construction_department'),
-    path('project/', include('project.urls')),        # ✅ Ensures projects are accessible
-    path('customer/', include('customer.urls')),        # ✅ Ensures projects are accessible
-    path('sales_bill/', include('sales_bill.urls')),  # ✅ Ensures sales bills are accessible
-    path('resource/', include('resource.urls')),  # Nested resource-related URLs
-    
+
+    # 💼 Submodules neatly routed:
+    path('project/', include('project.urls')),
+    path('customer/', include('customer.urls')),
+    path('sales_bill/', include('sales_bill.urls')),
+    path('resource/', include('resource.urls')),
 ]
+
+
 
 
 
