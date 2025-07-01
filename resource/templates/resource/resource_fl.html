@@ -125,6 +125,12 @@
     border-radius: 4px;
     font-size: 14px;
   }
+
+  <label for="filterWidth">Adjust Filter Width:</label>
+<input type="range" id="filterWidth" min="30" max="100" value="50" oninput="adjustFilterWidth(this.value)">%
+<input class="filter-box" type="text" placeholder="🔍 Type to filter...">
+
+
 </style>
 <div class="form-container">
   <h2>{% if edit_id %}Edit{% else %}Create{% endif %} Resource</h2>
